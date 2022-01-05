@@ -1,0 +1,18 @@
+Этот файл сопоставляет переименованные переменные исходным.
+v5=sp
+v6=ndongid
+v7=tmrtimer
+v0=ninterval
+vv1=bstarted
+vv2=togglestartstopbuttons
+vv3=dong
+vv4=getminutes
+vv5=getseconds
+vv6=bmenuopened
+vv7=strmintext
+vv0=strsectext
+vvv1=xui
+vvv2=togglemenu
+vvv3=stop
+vvv4=start
+vvv5=updateinterval

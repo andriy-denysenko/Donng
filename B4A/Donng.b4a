@@ -1,14 +1,20 @@
-﻿Build1=Default,b4a.example
-File1=Layout.bal
+﻿Build1=Default,ua.pp.ingulsoft.Donng
+File1=bell.png
+File2=bg.jpg
+File3=Main.bal
+File4=settings.bal
 FileGroup1=Default Group
+FileGroup2=Default Group
+FileGroup3=Default Group
+FileGroup4=Default Group
 Group=Default Group
 Library1=core
 Library2=xui
+Library3=audio
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="14" android:targetSdkVersion="29"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
-Module1=Starter
-NumberOfFiles=1
-NumberOfLibraries=2
-NumberOfModules=1
+NumberOfFiles=4
+NumberOfLibraries=3
+NumberOfModules=0
 Version=11.2
 @EndOfDesignText@
 #Region  Project Attributes 
@@ -25,6 +31,7 @@ Version=11.2
 	#IncludeTitle: False
 #End Region
 
+' TODO: Make it work when the app is not active
 ' TODO: Add customizable reminders + TTS reminders.
 
 Sub Process_Globals
@@ -33,23 +40,62 @@ Sub Process_Globals
 	Private xui As XUI
 	
 	Private tmrTimer As Timer
+	
+	Private nInterval As String = 30000 ' 30 s as default for the process
+	' TODO: get from settings
 End Sub
 
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
-	Private nInterval As String = 30000 ' 30 s as default
 	
-	' Labels to start adn to stop the timer
+	' Labels to start and to stop the timer
 	Private lblStart As Label
 	Private lblStop As Label
+	
+	' Menu label
+	Private lblMenu As Label
+	
+	' Menu
+	Private pnlMenu As Panel
+	Private lblBack As Label
+	Private lblSettings As Label
+	Private lblExit As Label
+	
+	' Settings
+	Private lblBackFromSettings As Label
+	
+	Private lblSettingsTitle As Label
+	Private lblInterval As Label
+	Private lblMin As Label
+	Private seekBarMin As SeekBar
+	Private lblSec As Label
+	Private seekBarSec As SeekBar
+	
+	' NON-UI
 	
 	Private sp As SoundPool
 	Private nDongId As Int
 	
+	Private bStarted As Boolean
+	Private bMenuOpened As Boolean
+	
+	Private strMinText As String = "Minutes: "
+	Private strSecText As String = "Seconds: "
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
-	Activity.LoadLayout("Layout")
+	Log("+ Activity_Create +")
+	If FirstTime Then
+		Log("*   First time *")
+		sp.Initialize(6)
+		nDongId = sp.Load(File.DirAssets, "121800__boss-music__gong.wav")
+		tmrTimer.Initialize("TickTimer", nInterval)
+	End If
+	
+	Activity.LoadLayout("main")
+	bStarted = False
+	ToggleStartStopButtons
+	Log("+ Activity_Create +")
 End Sub
 
 Sub Activity_Resume
@@ -60,3 +106,177 @@ Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
+Sub ToggleStartStopButtons
+	Log("+ ToggleStartStopButtons +")
+	If bStarted = True Then
+		Log("*   Started *")
+		lblStart.Enabled = False
+		lblStart.Visible = False
+		
+		lblStop.Enabled = True
+		lblStop.Visible = True
+	Else
+		Log("*   Stopped *")
+		lblStop.Enabled = False
+		lblStop.Visible = False
+		
+		lblStart.Enabled = True
+		lblStart.Visible = True
+	End If
+	Log("- ToggleStartStopButtons -")
+End Sub
+
+Sub ToggleMenu
+	Log("+ ToggleMenu +")
+	If bMenuOpened = True Then
+		Log("+ Menu Opened +")
+		pnlMenu.Enabled = True
+		pnlMenu.Visible = True
+		
+		lblMenu.Enabled = False
+		lblMenu.Visible = False
+	Else
+		Log("+ Menu Closed +")
+		pnlMenu.Enabled = False
+		pnlMenu.Visible = False
+		
+		lblMenu.Enabled = True
+		lblMenu.Visible = True
+	End If
+	Log("- ToggleMenu -")
+End Sub
+
+Private Sub Start
+	Log("+ Start +")
+	Log("*   Setting interval *")
+	tmrTimer.Interval = nInterval
+	Log("*   Interval set to '" & tmrTimer.Interval & "'")
+	Log("*   Enabling timer *")
+	tmrTimer.Enabled = True
+	Log("*   Timer enabled: '" & tmrTimer.Enabled & "'")
+	
+	Log("*   Setting started *")
+	bStarted = True
+	Log("*   Started: '" & bStarted & "'")
+	ToggleStartStopButtons
+	Log("*   Calling Dong *")
+	Dong
+	Log("- Start -")
+End Sub
+
+Private Sub Dong
+	sp.Play(nDongId, 1, 1, 1, 0, 1)
+End Sub
+
+Private Sub Stop
+	Log("+ Stop +")
+	Log("*   Disabling timer *")
+	tmrTimer.Enabled = False
+	Log("*   Timer enabled: '" & tmrTimer.Enabled & "'")
+	
+	Log("*   Setting started *")
+	bStarted = False
+	Log("*   Started: '" & bStarted & "'")
+	ToggleStartStopButtons
+	Log("- Stop -")
+End Sub
+
+Private Sub TickTimer_Tick
+	Dong
+End Sub
+
+Private Sub lblStart_Click
+	bStarted = True
+	ToggleStartStopButtons
+	Start
+End Sub
+
+Private Sub lblStop_Click
+	bStarted = False
+	ToggleStartStopButtons
+	Stop
+End Sub
+
+Private Sub lblMenu_Click
+	bMenuOpened = True
+	ToggleMenu
+End Sub
+
+Private Sub lblBack_Click
+	bMenuOpened = False
+	ToggleMenu
+End Sub
+
+Private Sub GetMinutes As Int
+	Dim itv As Int = nInterval / 1000
+	Dim result As Int = 0
+	
+	If itv > 60 Then
+		Dim reminder As Int = itv Mod 60
+		result = (itv - reminder) /60
+	End If
+	Log("*   Minutes: '" & result & "' *")
+	Return result
+End Sub
+
+Private Sub GetSeconds As Int
+	Dim itv As Int = nInterval / 1000
+	Dim result As Int = itv
+	
+	If itv > 59 Then
+		Dim reminder As Int = itv Mod 60
+		result = (itv - reminder) /60
+	End If
+	Log("*   Seconds: '" & result & "' *")
+	Return result
+End Sub
+
+Private Sub lblSettings_Click
+	Log("+ lblSettings_Click +")
+	Log("*   Calling Stop *")
+	Stop
+	Log("*   Back to lblSettings_Click *")
+	Log("*   Removing views *")
+	Activity.RemoveAllViews
+	
+	Log("*   Loading layout 'settings' *")
+	Activity.LoadLayout("settings")
+	
+	Log("*   Setting minutes and seconds text & sliders *")
+	Dim m As Int = GetMinutes
+	Dim s As Int = GetSeconds
+	lblMin.Text = strMinText & m
+	lblSec.Text = strSecText & s
+	seekBarMin.Value = m
+	seekBarSec.Value = s
+	Log("- lblSettings_Click -")
+End Sub
+
+Private Sub lblBackFromSettings_Click
+	Log("+ lblBackFromSettings_Click +")
+	Log("*   Removing views *")
+	Activity.RemoveAllViews
+	
+	Log("*   Loading layout 'main' *")
+	Activity.LoadLayout("main")
+
+	Log("- lblBackFromSettings_Click -")
+End Sub
+
+Private Sub UpdateInterval
+	nInterval = (seekBarMin.Value *   60 + seekBarSec.Value) * 1000
+	lblMin.Text = strMinText & seekBarMin.Value
+	lblSec.Text = strSecText & seekBarSec.Value
+End Sub
+
+Private Sub seekBarMin_ValueChanged (Value As Int, UserChanged As Boolean)
+	UpdateInterval
+End Sub
+
+Private Sub seekBarSec_ValueChanged (Value As Int, UserChanged As Boolean)
+	UpdateInterval
+End Sub
+
+Private Sub lblExit_Click
+	Activity.Finish
+End Sub
