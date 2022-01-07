@@ -1,18 +1,20 @@
 ﻿Build1=Default,ua.pp.ingulsoft.Donng
-File1=bell.png
-File2=bg.jpg
-File3=Main.bal
-File4=settings.bal
+File1=about.bal
+File2=bell.png
+File3=bg.jpg
+File4=Main.bal
+File5=settings.bal
 FileGroup1=Default Group
 FileGroup2=Default Group
 FileGroup3=Default Group
 FileGroup4=Default Group
+FileGroup5=Default Group
 Group=Default Group
 Library1=core
 Library2=xui
 Library3=audio
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="14" android:targetSdkVersion="29"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
-NumberOfFiles=4
+NumberOfFiles=5
 NumberOfLibraries=3
 NumberOfModules=0
 Version=11.2
@@ -31,6 +33,7 @@ Version=11.2
 	#IncludeTitle: False
 #End Region
 
+' TODO: Make volume customizable
 ' TODO: Make it work when the app is not active
 ' TODO: Add customizable reminders + TTS reminders.
 
@@ -81,6 +84,8 @@ Sub Globals
 	
 	Private strMinText As String = "Minutes: "
 	Private strSecText As String = "Seconds: "
+	Private lblBackFromAbout As Label
+	Private lblAbout As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -252,6 +257,20 @@ Private Sub lblSettings_Click
 	Log("- lblSettings_Click -")
 End Sub
 
+Private Sub lblAbout_Click
+	Log("+ lblAbout_Click +")
+	Log("*   Calling Stop *")
+	Stop
+	Log("*   Back to lblAbout_Click *")
+	Log("*   Removing views *")
+	Activity.RemoveAllViews
+	
+	Log("*   Loading layout 'About' *")
+	Activity.LoadLayout("about")
+
+	Log("- lblAbout_Click -")
+End Sub
+
 Private Sub lblBackFromSettings_Click
 	Log("+ lblBackFromSettings_Click +")
 	Log("*   Removing views *")
@@ -261,6 +280,17 @@ Private Sub lblBackFromSettings_Click
 	Activity.LoadLayout("main")
 
 	Log("- lblBackFromSettings_Click -")
+End Sub
+
+Private Sub lblBackFromAbout_Click
+	Log("+ lblBackFromAbout_Click +")
+	Log("*   Removing views *")
+	Activity.RemoveAllViews
+	
+	Log("*   Loading layout 'main' *")
+	Activity.LoadLayout("main")
+
+	Log("- lblBackFromAbout_Click -")
 End Sub
 
 Private Sub UpdateInterval

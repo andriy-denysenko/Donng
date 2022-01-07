@@ -1,6 +1,6 @@
 ﻿ModuleBookmarks0=
 ModuleBreakpoints0=
 ModuleClosedNodes0=
-NavigationStack=Main,Stop,159,0,Main,lblBackFromSettings_Click,232,1,Main,Globals,46,0,Main,ToggleStartStopButtons,94,2,Main,Activity_Create,80,6,Main,seekBarSec_ValueChanged,251,0,Main,GetSeconds,208,0,Main,lblSettings_Click,223,6,Main,UpdateInterval,245,0,Main,GetMinutes,196,6
+NavigationStack=Main,GetMinutes,196,6,Main,lblBackFromSettings_Click,237,0,Main,lblBackFromAbout_Click,254,0,Main,Globals,66,0,Main,lblExit_Click,276,0,Main,lblSettings_Click,217,0,Визуальный конструктор,main.bal,-100,6,Main,lblAbout_Click,246,0,Визуальный конструктор,about.bal,-100,6,Визуальный конструктор,settings.bal,-100,4
 SelectedBuild=0
 VisibleModules=
